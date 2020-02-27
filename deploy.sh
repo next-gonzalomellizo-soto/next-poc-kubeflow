@@ -5,6 +5,41 @@
 # Install kubectl: brew install kubectl
 # Install minikube: brew install minikube
 
+# For Ubuntu
+# Install libvirt and qemu-kvm on your system, e.g.
+# Debian/Ubuntu (for older Debian/Ubuntu versions, you may have to use libvirt-bin instead of libvirt-clients and libvirt-daemon-system)
+sudo apt install libvirt-clients libvirt-daemon-system qemu-kvm
+
+# Add yourself to the libvirt group so you don't need to sudo
+# NOTE: For older Debian/Ubuntu versions change the group to `libvirtd`
+sudo usermod -a -G libvirt $(whoami)
+
+# Update your current session for the group change to take effect
+# NOTE: For older Debian/Ubuntu versions change the group to `libvirtd`
+newgrp libvirt
+
+# Install the driver
+curl -Lo docker-machine-driver-kvm2 https://storage.googleapis.com/minikube/releases/latest/docker-machine-driver-kvm2 \
+&& chmod +x docker-machine-driver-kvm2 \
+&& sudo cp docker-machine-driver-kvm2 /usr/local/bin/ \
+&& rm docker-machine-driver-kvm2
+
+# Install kubectl
+sudo apt-get update && sudo apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo touch /etc/apt/sources.list.d/kubernetes.list
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubectl
+
+kubectl version
+
+# Get minikube
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.28.0/minikube-linux-amd64
+chmod +x minikube
+sudo mv minikube /usr/local/bin/
+
+
 # Start Kubernetes cluster
 # Kubeflow 0.7.1 Kubernetes 1.15.0
 minikube start --cpus 4 --memory 8096 --disk-size=40g --kubernetes-version 1.15.0
